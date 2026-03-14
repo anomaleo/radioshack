@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+    <head>
+        <title>Websocket Client</title>
+    </head>
+    <body style="background: pink">
+        <p>CPU temperature: <strong>-</strong>&deg;C</p>
+        <p>NeoPixel Color: <input type="color"></p>
+        
+        
+    	<h2>Forward</h2>
+    	<input id="fwd" type="range" min="0" max="127" value="0">
+    	<h2>Backward</h2>
+    	<input id="bwd" type="range" min="0" max="1" value="0">
+    	<h2>Left</h2>
+    	<input id="l" type="range" min="0" max="1" value="0">
+    	<h2>Right</h2>
+    	<input id="r" type="range" min="0" max="1" value="0">
+
+    	<h2>Stop</h2>
+    	<input id="stop" type="range" min="0" max="1" value="0">
+    	<h2>Honk</h2>
+    	<input id="honk" type="range" min="0" max="1" value="0">
+    	<h2>Flash</h2>
+    	<input id="flash" type="range" min="0" max="1" value="0">
+        
+        <script>
+            const cpuTemp = document.querySelector('strong');
+            const colorPicker = document.querySelector('input[type="color"]');
+            
+
+			let fwd = document.querySelector('input[id="fwd"]');
+			fwd.addEventListener('input', (event) => {
+				console.log(JSON.stringify( { 'forward': fwd.value / 100 } ))
+  				ws.send(JSON.stringify( { 'forward': fwd.value / 100 } ));
+			}, false);
+			
+			let bwd = document.querySelector('input[id="bwd"]');
+			bwd.addEventListener('input', (event) => {
+				console.log(JSON.stringify( { 'backward': bwd.value } ))
+  				ws.send(JSON.stringify( { 'backward': bwd.value } ));
+			}, false);
+			
+			const left = document.querySelector('input[id="l"]');
+			const right = document.querySelector('input[id="r"]');
+			const stop = document.querySelector('input[id="stop"]');
+            
+            let ws = new WebSocket('ws://' + location.host + '/connect-websocket');
+
+            ws.onopen = () => console.log('WebSocket connection opened');
+            ws.onclose = () => console.log('WebSocket connection closed');
+            ws.onmessage = event => cpuTemp.textContent = event.data;
+            ws.onerror = error => cpuTemp.textContent = error;
+
+            colorPicker.oninput = debounce(() => ws.send(colorPicker.value), 200);
+
+            function debounce(callback, delay = 1000) {
+                let timeout
+                return (...args) => {
+                    clearTimeout(timeout)
+                    timeout = setTimeout(() => {
+                    callback(...args)
+                  }, delay)
+                }
+            }
+        </script>
+    </body>
+</html>

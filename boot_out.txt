@@ -1,0 +1,4 @@
+Adafruit CircuitPython 10.0.3 on 2025-10-17; Adafruit QT Py ESP32-S3 no psram with ESP32S3
+Board ID:adafruit_qtpy_esp32s3_nopsram
+UID:42CEA4D15C44
+MAC:24:EC:4A:1D:C5:44
