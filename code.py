@@ -1,38 +1,22 @@
 # https://github.com/adafruit/Adafruit_CircuitPython_HTTPServer/blob/main/examples/httpserver_start_and_poll.py
 # https://github.com/adafruit/Adafruit_CircuitPython_HTTPServer/blob/main/examples/httpserver_start_and_poll_asyncio.py
-
-from asyncio import create_task, gather, run
-from asyncio import sleep as async_sleep
-
 import board
 import time
 import microcontroller
-import adafruit_qmc5883p
 import neopixel
 import mdns
 import socketpool
 import math
 import os, wifi
-# MOTOR DRIVER
-from radioshack_motors import motors, left, right, stop, forward, backward
 
+# RADIOSHACK ACCESS POINT
+import radioshack_create_access_point
+print("ACESS POINT IP: ", wifi.radio.ipv4_address_ap)
 
-i2c = board.STEMMA_I2C()
-sensor = adafruit_qmc5883p.QMC5883P(i2c)
-
+# RADIOSHACK HTTP SERVER & WEBSOCKET
 from adafruit_httpserver import GET, FileResponse, Request, Response, Server, Websocket, REQUEST_HANDLED_RESPONSE_SENT
-#import os, wifi
-print("connecting...")
-#wifi.radio.connect(ssid=os.getenv('CIRCUITPY_WIFI_SSID'),
-#   password=os.getenv('CIRCUITPY_WIFI_PASSWORD'))
-#print("my IP addr:", wifi.radio.ipv4_address)
-
-AP_SSID = "RadioShack"
-AP_PASSWORD = "RadioShack"
-
-print("Creating access point...")
-wifi.radio.start_ap(ssid=AP_SSID, password=AP_PASSWORD)
-print(f"Created access point {AP_SSID}")
+from asyncio import create_task, gather, run
+from asyncio import sleep as async_sleep
 
 mdns_server = mdns.Server(wifi.radio)
 mdns_server.hostname = "radioshack"
@@ -42,10 +26,22 @@ mdns_server.advertise_service(service_type="_http", protocol="_tcp", port=80)   
 pool = socketpool.SocketPool(wifi.radio)
 server = Server(pool, "/static", debug=True)
 
-# pixel = neopixel.NeoPixel(board.NEOPIXEL, 1)
-print("ap ip", wifi.radio.ipv4_address_ap)
-
 websocket: Websocket = None
+
+# RADIOSHACK HTML WEBPAGE
+from radioshack_www_html import HTML_TEMPLATE
+
+# MOTOR DRIVER
+from radioshack_motors import motors, left, right, stop, forward, backward
+
+# MAGNETOMETER
+import adafruit_qmc5883p
+i2c = board.STEMMA_I2C()
+sensor = adafruit_qmc5883p.QMC5883P(i2c)
+
+
+
+
 
 HTML_TEMPLATE = """
 <!DOCTYPE html>
