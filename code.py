@@ -11,7 +11,6 @@ import os, wifi
 
 # RADIOSHACK ACCESS POINT
 import radioshack_create_access_point
-print("ACESS POINT IP: ", wifi.radio.ipv4_address_ap)
 
 # RADIOSHACK HTTP SERVER & WEBSOCKET
 from adafruit_httpserver import GET, FileResponse, Request, Response, Server, Websocket, REQUEST_HANDLED_RESPONSE_SENT
@@ -25,7 +24,6 @@ mdns_server.advertise_service(service_type="_http", protocol="_tcp", port=80)   
 
 pool = socketpool.SocketPool(wifi.radio)
 server = Server(pool, "/static", debug=True)
-
 websocket: Websocket = None
 
 # RADIOSHACK HTML WEBPAGE
@@ -100,8 +98,7 @@ async def act_on_websokect_msg():
         # Do something useful in this section,
         # for example read a sensor and capture an average,
         # or a running total of the last 10 samples
-        print("want to do something cool")
-        
+        # print("or we can do something cool here!")
         await async_sleep(1)
         # If you want you can stop the server by calling server.stop() anywhere in your code
 
@@ -127,13 +124,13 @@ async def handle_websocket_requests():
         await async_sleep(0)
 
 
-async def send_websocket_messages():
-    while True:
-        if websocket is not None:
-            cpu_temp = round(microcontroller.cpu.temperature, 2)
-            websocket.send_message(str(cpu_temp), fail_silently=True)
-
-        await async_sleep(1)
+# async def send_websocket_messages():
+#     while True:
+#         if websocket is not None:
+#             cpu_temp = round(microcontroller.cpu.temperature, 2)
+#             websocket.send_message(str(cpu_temp), fail_silently=True)
+# 
+#         await async_sleep(1)
 
 
 async def main():
@@ -141,7 +138,7 @@ async def main():
         create_task(handle_http_requests()),
         create_task(handle_websocket_requests()),
         create_task(act_on_websokect_msg()),
-        create_task(send_websocket_messages()),
+        # create_task(send_websocket_messages()),
     )
 
 
