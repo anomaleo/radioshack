@@ -10,7 +10,7 @@ import radioshack_create_www_websocket
 # QMC588L MAGNETOMETER
 import adafruit_qmc5883p
 # MOTOR DRIVER
-from radioshack_motors import *
+from radioshack_motors import motors, left, right, stop, forward, backward
 
 # CREATE MAGNETOMETER
 i2c = board.STEMMA_I2C()
@@ -28,6 +28,27 @@ def cardinal():
 	print("Heading: {:.2f} degrees".format(math.degrees(heading) - 15))
 
 
-while True:
-	cardinal()
-	pass
+while True: 
+	forward(motors, 0.5)
+	time.sleep(1)
+
+	stop(motors, 0.0)
+	time.sleep(1)
+	
+	backward(motors, -0.5)
+	time.sleep(1)
+
+	stop(motors, 0.0)
+	time.sleep(1)
+	
+	left(motors, 0.5)
+	time.sleep(1)
+	
+	stop(motors, 0.0)
+	time.sleep(1)
+	
+	right(motors, 0.5)
+	time.sleep(1)
+	
+	stop(motors, 0.0)
+	time.sleep(1)
